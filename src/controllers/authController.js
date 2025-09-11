@@ -32,7 +32,7 @@ export const signupController = async (req, res) => {
       );
 
     const isExist = await Users.findOne({ email: email });
-    if (isExist) return errorHandler(res, 402, "user already exist");
+    if (isExist) return errorHandler(res, 402, "User already exist");
 
     try {
       const hashedPass = await hash(password, 10);
@@ -57,33 +57,8 @@ export const signupController = async (req, res) => {
   } catch (error) {
     console.log(error, "---> registration me error he");
   }
+  
 };
-
-
-// resendCode controller
-export const resendCode = async (req , res) => {
-
-  try {
-    const { email } = req.body
-    const verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-    const resendCodeSend = await Users.updateOne({ email: email }, {
-      $set: {
-        verificationCode
-      }
-    })
-
-    if (resendCodeSend.matchedCount === 0) return errorHandler(res, 404, "User not found", resendCodeSend.error)
-
-    sendEmail(email, verificationCode.toString())
-    return successHandler(res, 200, "User verification code resend successfully", resendCodeSend)
-  }
-  catch (err) {
-    console.log(err, "<--- resendCode  error he");
-    errorHandler(res, 404, "user not found , verification code can not resend", err)
-  }
-
-}
 
 
 // login controller
@@ -139,16 +114,41 @@ export const loginController = async (req, res) => {
 };
 
 
+// resendCode controller
+export const resendCode = async (req , res) => {
+
+  try {
+    const { email } = req.body
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+    const resendCodeSend = await Users.updateOne({ email: email }, {
+      $set: {
+        verificationCode
+      }
+    })
+
+    if (resendCodeSend.matchedCount === 0) return errorHandler(res, 404, "User not found", resendCodeSend.error)
+
+    sendEmail(email, verificationCode.toString())
+    return successHandler(res, 200, "User verification code resend successfully", resendCodeSend)
+  }
+  catch (err) {
+    console.log(err, "<--- resendCode  error he");
+    errorHandler(res, 404, "user not found , verification code can not resend", err)
+  }
+
+}
+
+
 // userVerification controller
 export const userVerification = async (req, res) => {
   const { userCode } = req.body
   console.log(userCode, "<----user code");
 
   try {
-    const response = await Users.findOne({ verificationCode: userCode })
-    if (!response) errorHandler(res, 402, "Invalid code", response)
-    console.log("Response verifies user =--->", response);
-
+    // const response = await Users.findOne({ verificationCode: userCode })
+    // if (!response) errorHandler(res, 402, "Invalid code", response)
+    // console.log("Response verifies user =--->", response);      zarurat nahi kio neche handle kar lia he  162 pe
 
     const verifiedUserUpdate = await Users.updateOne({ verificationCode: userCode }, {
       $set: {
@@ -191,6 +191,7 @@ export const verificationCodeDeleterAfter3m = async (req, res) => {
     successHandler(res, 200, "User verification code deleted successfully", verificationCodeDeleted)
   }
   catch (err) {
+
     console.log(err, "<--- verificationCodeDeleterAfter3m  error he");
     errorHandler(res, 404, "user not found", err)
 

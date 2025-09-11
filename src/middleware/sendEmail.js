@@ -5,7 +5,7 @@ export const sendEmail = async (userEmail , verificationCode) => {
 
     try {
         const info = await transporter.sendMail({
-            from: '"Nu bit prvt Lmt" <hbawany1@gmail.com>',
+            from: '"Nubit pvt Ltd" <hbawany1@gmail.com>',
             to: userEmail  ,
             subject: "Verify Your Email",
             text: "Verify Your Email", // plain‑text body
@@ -24,7 +24,7 @@ export const sendWelcomeEmail = async (userEmail , userName) => {
 
     try {
         const info = await transporter.sendMail({
-            from: '"Nu bit prvt Lmt" <hbawany1@gmail.com>',
+            from: '"Nubit prvt Lmt" <hbawany1@gmail.com>',
             to: userEmail  ,
             subject: "Welcome Email",
             text: "Welcome Email", // plain‑text body
